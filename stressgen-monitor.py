@@ -15,8 +15,12 @@ Simple Web Server for StressGen
    (start stressgen with -M<host where this server expected>)
 TODO:
    Should be refactored one day
+   Http Server should be optional: output just to console by default
+   Web: option to reset all the info
+        time of host up - time host died
+        option to stop/start autorefresh
 """
-
+DEBUG=True
 TIMEOUT = 20.0
 HEARTBEAT_PORT = 60888
 HostList = {}
@@ -104,6 +108,7 @@ def get_table():
             else:
                 HostStatus["on"] += 1
         table += "<tr %s>" % is_alive
+        # should be in try-catch
         table += "<td>%s - %s</td><td>%s</td>\n" % (i, HostList[i]['S'], HostList[i]['C'])
         table += row + "</tr>\n"
     return table
@@ -189,7 +194,11 @@ class HeartbeatListener(threading.Thread):
 
     def run(self):
         while True:
-            msg, addr = self.heartbeat_lstnr.recvfrom(1024)
+            # payload buffer size is 1024, but there is a header (~68 bytes) also, so 2048
+            msg, addr = self.heartbeat_lstnr.recvfrom(2048)
+            if DEBUG:
+                print "========== FROM %s =========" % addr[0]
+                print repr(msg)
             if HostList.has_key(addr[0]) and HostList[addr[0]].has_key('N1'):
                 HostList[addr[0]]['t0'] = HostList[addr[0]]['t1']
                 HostList[addr[0]]['N0'] = HostList[addr[0]]['N1']

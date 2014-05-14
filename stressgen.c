@@ -96,6 +96,11 @@ char *os_name = "Unknown";
 #define PING_MSG_SIZE_DEFAULT 1024
 #define PING_DELAY_DEFAULT 1*MICROSEC_PER_SEC
 #define HEARTBEAT_DELAY_DEFAULT 10*MICROSEC_PER_SEC
+/* TODO:
+ * Max Packet size:  MTU - (Max IP Header Size) - (UDP Header Size) = 1500 - 60 - 8 = 1432
+ * but for relyability probably it should be:
+ * (min IP pack size) - (Max IP Header Size) - (UDP Header Size) = 576 - 60 - 8 = 508 ???
+ */
 #define STATS_SIZE 1024
 #define INVALID_ADDR 0
 
